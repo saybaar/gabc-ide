@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<header>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</header>
+<body>
+<div>hello!</div>
+<textarea id="input"></textarea>
+<button id='submit'>submit</button>
+<div id="output"></div>
+<iframe src="gen.pdf" width="768px" height="1024px"></iframe>
+</body>
+<script type="text/javascript">
+  console.log('hello');
+  $('#submit').on('click', function() {
+    console.log('making a POST request with body ' + $('#input').val());
+    jQuery.ajax({
+      type: 'POST',
+      url: '/generate',
+      data: {
+          gabc: $('#input').val()
+      },
+      success: function(result) {
+        $('#output').text('if an error occured, it should show here: ' + result);
+      }
+    });
+  });
+</script>
+</html>

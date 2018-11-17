@@ -1,0 +1,17 @@
+{
+  "name": "gabc-processor",
+  "version": "0.0.1",
+  "description": "Web project to process gabc into midi and/or PDF",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Lydia Simmons",
+  "license": "GPLv3",
+  "dependencies": {
+    "child_process": "^1.0.2",
+    "express": "^4.16.4",
+    "fs": "0.0.1-security",
+    "pdfjs-dist": "^2.0.489"
+  }
+}
