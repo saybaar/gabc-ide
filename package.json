@@ -12,6 +12,9 @@
     "child_process": "^1.0.2",
     "express": "^4.16.4",
     "fs": "0.0.1-security",
-    "pdfjs-dist": "^2.0.489"
+    "pdfjs-dist": "^2.0.489",
+    "pdfobject": "^2.1.1",
+    "socket.io": "^2.1.1",
+    "webpack": "^4.26.0"
   }
 }

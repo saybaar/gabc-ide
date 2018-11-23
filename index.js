@@ -1,9 +1,10 @@
 'use strict';
 
 var express = require('express');
+var socket = require('socket.io');
 var parser = require('body-parser');
+var process = require('process');
 var fs = require('fs');
-var pdfjs = require('pdfjs-dist');
 const { spawn } = require('child_process');
 /*
 ls.stdout.on('data', (data) => {
@@ -19,17 +20,26 @@ ls.stdout.on('data', (data) => {
   // (lualatex does its own file generation)
 });
 */
-
+var guid = "1234567890";
 
 var server = express();
 server.use(parser.urlencoded());
 
 server.get('/', function(req, res) {
-  res.status(200);
-  res.type('html');
-  res.sendFile('/home/lydia/webdev-project/index.html');
+  console.log('starting in directory ' + process.cwd());
+  // make a temp directory; when scalable, this will happen inside a socket
+  // event instead probably
+  fs.mkdir('./' + guid, (err) => {
+    if (err.code != 'EEXIST') throw err;
+    process.chdir('./' + guid);
+    console.log('now in directory ' + process.cwd());
+    res.status(200);
+    res.type('html');
+    res.sendFile('/home/lydia/webdev-project/index.html');
+  });
 });
 
+// Receive a POST with gabc body
 server.post('/generate', function(req, res) {
   console.log('received POST with body: ' + req.body.gabc);
   const render = spawn('lualatex', ['--shell-escape', 'test.tex']);
@@ -55,15 +65,15 @@ server.post('/generate', function(req, res) {
     console.log('ls-error says: ' + data);
   });
   cleanup.on('close', (code) => {
-    console.log('cleanup edited with code' + code);
+    console.log('cleanup edited with code ' + code);
   });
 
 });
 
-server.get('/gen.pdf', function(req, res) {
+server.get('/:guid/gen.pdf', function(req, res) {
   res.status(200);
   res.type('application/pdf');
-  res.sendFile('/home/lydia/webdev-project/gregorio-test.pdf');
+  res.sendFile('/home/lydia/webdev-project/' + gen + '/test.pdf');
 })
 /*
 server.get('/test.mid', function(req, res) {
