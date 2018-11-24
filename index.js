@@ -28,22 +28,32 @@ server.use(parser.urlencoded());
 server.get('/', function(req, res) {
   console.log('starting in directory ' + process.cwd());
   // make a temp directory; when scalable, this will happen inside a socket
-  // event instead probably
-  fs.mkdir('./' + guid, (err) => {
-    if (err.code != 'EEXIST') throw err;
+  // connection event instead
+  fs.mkdir(__dirname + '/' + guid, (err) => {
+    if (err.code != 'EEXIST') { throw err; }
     process.chdir('./' + guid);
     console.log('now in directory ' + process.cwd());
     res.status(200);
     res.type('html');
-    res.sendFile('/home/lydia/webdev-project/index.html');
+    res.sendFile(__dirname + '/index.html');
   });
 });
 
+server.get('/example.gabc', function(req, res) {
+  res.status(200);
+  res.type('text/plain');
+  res.sendFile(__dirname + '/example.gabc');
+})
+
 // Receive a POST with gabc body
 server.post('/generate', function(req, res) {
-  console.log('received POST with body: ' + req.body.gabc);
+  var gabc = req.body.gabc;
+  var gabc_file = 'example.gabc';
+  fs.writeFile(gabc_file, gabc, (err) => {
+    if (err) throw err;
+    console.log('saved some GABC');
+  });
   const render = spawn('lualatex', ['--shell-escape', 'test.tex']);
-  const cleanup = spawn('ls', ['*.glog', '*.gtex']);
   var output = '';
 
   render.stderr.on('data', (data) => {
@@ -53,27 +63,22 @@ server.post('/generate', function(req, res) {
 
   render.on('close', (code) => {
     console.log('render process exited with code ' + code);
-    res.status(200);
-    res.type('text/plain');
-    res.send(output);
+    if (code === 0) {
+      res.status(200);
+      res.type('text/plain');
+      res.send();
+    } else {
+      res.status(400);
+      res.type('text/plain');
+      res.send(output);
+    }
   });
-
-  cleanup.stdout.on('data', (data) => {
-    console.log('ls says: ' + data);
-  });
-  cleanup.stderr.on('data', (data) => {
-    console.log('ls-error says: ' + data);
-  });
-  cleanup.on('close', (code) => {
-    console.log('cleanup edited with code ' + code);
-  });
-
 });
 
-server.get('/:guid/gen.pdf', function(req, res) {
+server.get('/:guid/test.pdf', function(req, res) {
   res.status(200);
   res.type('application/pdf');
-  res.sendFile('/home/lydia/webdev-project/' + gen + '/test.pdf');
+  res.sendFile(__dirname + '/' + guid + '/test.pdf');
 })
 /*
 server.get('/test.mid', function(req, res) {

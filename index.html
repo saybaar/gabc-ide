@@ -3,18 +3,25 @@
 <header>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script type="text/javascript" src="http://localhost:8080/socket.io/socket.io.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfobject/2.1.1/pdfobject.js"></script>
+
 </header>
 <body>
 <div>hello!</div>
-<textarea id="input"></textarea>
+<textarea id="input" rows="10" cols="100"></textarea>
 <button id='submit'>submit</button>
 <div id="output"></div>
-<iframe src="gen.pdf" width="768px" height="1024px"></iframe>
 </body>
 <script type="text/javascript">
   console.log('hello');
+
+  var guid = '1234567890';
+
+  $( document ).ready(function() {
+    $('#input').load('example.gabc');
+  });
+
   $('#submit').on('click', function() {
-    console.log('making a POST request with body ' + $('#input').val());
     jQuery.ajax({
       type: 'POST',
       url: '/generate',
@@ -22,7 +29,11 @@
           gabc: $('#input').val()
       },
       success: function(result) {
-        $('#output').text('if an error occured, it should show here: ' + result);
+        console.log('success! embedding pdf...');
+        PDFObject.embed(guid + '/test.pdf', "#output");
+      },
+      error: function(result) {
+        $('#output').text('Error:\n' + result);
       }
     });
   });
