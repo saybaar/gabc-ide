@@ -1,7 +1,6 @@
 'use strict';
 
 var express = require('express');
-
 var parser = require('body-parser');
 var process = require('process');
 var socket = require('socket.io');
@@ -9,23 +8,9 @@ var fs = require('fs-extra');
 const {
   spawn
 } = require('child_process');
-/*
-ls.stdout.on('data', (data) => {
-  console.log('' + data);
-  // fs.writeFile('hello.pdf', data, function(err) {
-  //   if(err != undefined) {
-  //     console.log('error: ' + err);
-  //   } else {
-  //     console.log('done!');
-  //   }
-  // });
-  // ^ this is the way to go for a program like 'ls' that pipes to stdout
-  // (lualatex does its own file generation)
-});
-*/
 
 var server = express();
-var io = socket(server.listen(process.env.PORT || 8080));
+var io = socket(server.listen(8080));
 server.use(parser.urlencoded());
 
 server.get('/', function(req, res) {
@@ -40,10 +25,22 @@ server.get('/example.gabc', function(req, res) {
   res.sendFile(__dirname + '/example.gabc');
 });
 
+server.get('/short_example.gabc', function(req, res) {
+  res.status(200);
+  res.type('text/plain');
+  res.sendFile(__dirname + '/short_example.gabc');
+});
+
 server.get('/:guid/test.pdf', function(req, res) {
   res.status(200);
   res.type('application/pdf');
   res.sendFile(__dirname + '/' + req.params.guid + '/test.pdf');
+});
+
+server.get('/:guid/test.png', function(req, res) {
+  res.status(200);
+  res.type('image/png');
+  res.sendFile(__dirname + '/' + req.params.guid + '/test.png');
 });
 
 io.on('connection', function(objectSocket) {
@@ -87,6 +84,32 @@ io.on('connection', function(objectSocket) {
 
     render.on('close', (code) => {
       console.log('render process exited with code ' + code);
+      if (code === 0) {
+        renderImage();
+      } else {
+        objectSocket.emit('message', {
+          'status': 'error',
+          'log': output
+        });
+      }
+    });
+    // console.log('finished, moving out of ' + process.cwd());
+    process.chdir(__dirname);
+  };
+
+  var renderImage = function() {
+    process.chdir(__dirname + '/' + objectSocket.id); // todo: error check
+    var pdf_file = 'test.pdf';
+    const image_render = spawn('convert', ['-density', '300', pdf_file, '-quality', '90', 'test.png']);
+    var output = '';
+
+    image_render.stderr.on('data', (data) => {
+      console.log(data);
+      output = output + 'error: ' + data + '\n';
+    });
+
+    image_render.on('close', (code) => {
+      console.log('image render process exited with code ' + code);
       if (code === 0) {
         objectSocket.emit('message', {
           'status': 'done'
