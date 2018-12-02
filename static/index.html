@@ -12,12 +12,34 @@
 </style>
 
 <body>
-  <div>hello!</div>
-  <textarea style="font-family:monospace;" id="input" rows="10" cols="100"></textarea>
-  <button id='submit'>submit</button>
-  <div id="output"></div>
-  <img class="img-fluid" id="image"></img>
-  <audio controls id="audio"></audio>
+  <div class="container-fluid">
+    <div class="row my-1">
+      <div id="hello" class="col" data-toggle="collapse" data-target="#about">Hello!</div>
+    </div>
+    <div class="row my-1">
+      <div id="about" class="col collapse">
+        Here is some text about this app!
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md">
+        <div class="row my-1" id="controls">
+          <div class="col">
+            <a id="load-simple">Load simple example</a> •
+            <a id="load-full">Load full example</a>
+            (<a href="http://gregorio-project.github.io/gabc/details.html">source</a>)
+            <button id="submit" type="button" class="btn btn-primary float-right">submit</button>
+          </div>
+        </div>
+        <textarea id="input" class="form-control" style="min-width: 100%; font-family:monospace;" spellcheck="false" rows="20"></textarea>
+        <div id="output"></div>
+      </div>
+      <div class="col-md">
+        <audio controls id="audio"></audio>
+        <img class="img-fluid" id="image"></img>
+      </div>
+    </div>
+  </div>
 </body>
 <script type="text/javascript">
   console.log('hello');
@@ -36,6 +58,14 @@
     })
   });
 
+  $("#load-simple").on("click", function() {
+    $('#input').load('short_example.gabc');
+  });
+
+  $("#load-full").on("click", function() {
+    $('#input').load('example.gabc');
+  });
+
   objectSocket.on('audio', function(data) {
     $("#audio").attr("src", objectSocket.io.engine.id + "/test.wav?timestamp=" + new Date().getTime());
   });
@@ -44,13 +74,11 @@
     $("#image").attr("src", objectSocket.io.engine.id + "/test.png");
     // PDFObject.embed(objectSocket.io.engine.id + '/test.pdf', "#output", );
   });
-  objectSocket.on('error', function(data) {
-    $('#output').text('Error:\n' + data.log);
+  objectSocket.on('foobar', function(data) {
+    $('#output').text('Error from ' + data.source + ':\n' + data.log);
   });
 
-  $(document).ready(function() {
-    $('#input').load('example.gabc');
-  });
+  //$(document).ready(function() {});
 </script>
 
 </html>
