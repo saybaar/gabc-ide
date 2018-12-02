@@ -16,6 +16,8 @@
   <textarea style="font-family:monospace;" id="input" rows="10" cols="100"></textarea>
   <button id='submit'>submit</button>
   <div id="output"></div>
+  <img class="img-fluid" id="image"></img>
+  <audio controls id="audio"></audio>
 </body>
 <script type="text/javascript">
   console.log('hello');
@@ -29,19 +31,22 @@
   console.log('connected with id ' + strIdent);
 
   $('#submit').on('click', function() {
-    objectSocket.emit('message', {
+    objectSocket.emit('gen', {
       'gabc': $('#input').val()
     })
   });
 
-  objectSocket.on('message', function(data) {
-    if (data.status === 'done') {
-      console.log('success! embedding image...');
-      $("#output").append("<img src='" + objectSocket.io.engine.id + "/test.png' class='img-fluid'></img>");
-      // PDFObject.embed(objectSocket.io.engine.id + '/test.pdf', "#output", );
-    } else {
-      $('#output').text('Error:\n' + data.log);
-    }
+  objectSocket.on('audio', function(data) {
+    $("#audio").attr("src", "");
+    $("#audio").attr("src", objectSocket.io.engine.id + "/test.wav");
+  });
+  objectSocket.on('image', function(data) {
+    console.log('success! embedding image...');
+    $("#image").attr("src", objectSocket.io.engine.id + "/test.png");
+    // PDFObject.embed(objectSocket.io.engine.id + '/test.pdf', "#output", );
+  });
+  objectSocket.on('error', function(data) {
+    $('#output').text('Error:\n' + data.log);
   });
 
   $(document).ready(function() {
