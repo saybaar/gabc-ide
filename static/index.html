@@ -9,6 +9,7 @@
 </header>
 <style>
   .pdfobject-container { height: 4in; width:6in; border: 1rem solid rgba(0,0,0,.1); }
+  a { cursor: pointer; }
 </style>
 
 <body>
@@ -25,18 +26,19 @@
       <div class="col-md">
         <div class="row my-1" id="controls">
           <div class="col">
-            <a id="load-simple">Load simple example</a> •
-            <a id="load-full">Load full example</a>
+            <a id="load-simple" class="text-primary">Load simple example</a> •
+            <a id="load-full" class="text-primary">Load full example</a>
             (<a href="http://gregorio-project.github.io/gabc/details.html">source</a>)
             <button id="submit" type="button" class="btn btn-primary float-right">submit</button>
           </div>
         </div>
-        <textarea id="input" class="form-control" style="min-width: 100%; font-family:monospace;" spellcheck="false" rows="20"></textarea>
+        <textarea id="input" class="form-control" spellcheck="false" rows="20"
+                  style="min-width: 100%; font-family:monospace;"></textarea>
         <div id="output"></div>
       </div>
       <div class="col-md">
-        <audio controls id="audio"></audio>
-        <img class="img-fluid" id="image"></img>
+        <div id="audio"></div>
+        <div id="image"></div>
       </div>
     </div>
   </div>
@@ -59,19 +61,22 @@
   });
 
   $("#load-simple").on("click", function() {
-    $('#input').load('short_example.gabc');
+    $.get('short_example.gabc', function(data) {
+      $('#input').val(data);
+    });
   });
 
   $("#load-full").on("click", function() {
-    $('#input').load('example.gabc');
+    $.get('example.gabc', function(data) {
+      $('#input').val(data);
+    });
   });
 
   objectSocket.on('audio', function(data) {
-    $("#audio").attr("src", objectSocket.io.engine.id + "/test.wav?timestamp=" + new Date().getTime());
+    $("#audio").html("<audio controls src=" + objectSocket.io.engine.id + "/test.wav?timestamp=" + new Date().getTime() + "></audio");
   });
   objectSocket.on('image', function(data) {
-    console.log('success! embedding image...');
-    $("#image").attr("src", objectSocket.io.engine.id + "/test.png");
+    $("#image").html("<img class='img-fluid' src=" + objectSocket.io.engine.id + "/test.png?timestamp=" + new Date().getTime() + "></img>");
     // PDFObject.embed(objectSocket.io.engine.id + '/test.pdf', "#output", );
   });
   objectSocket.on('foobar', function(data) {

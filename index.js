@@ -12,7 +12,9 @@ const {
 var server = express();
 var io = socket(server.listen(8080));
 server.use(parser.urlencoded());
-express.static.mime.define({'text/plain': ['gabc']});
+express.static.mime.define({
+  'text/plain': ['gabc']
+});
 server.use(express.static('static'));
 
 server.get('/:guid/test.pdf', function(req, res) {
@@ -62,15 +64,18 @@ io.on('connection', function(objectSocket) {
       'source': source,
       'log': log
     });
-  }
+  };
 
   var copyGABC = function(gabc) {
     process.chdir(__dirname + '/temp/' + objectSocket.id); // todo: error check
     var gabc_file = 'example.gabc';
-    fs.writeFile(gabc_file, gabc, (err) => {
-      if (err) throw err;
-      console.log('wrote some GABC');
-    });
+    try {
+      fs.writeFileSync(gabc_file, gabc);
+    } catch (error) {
+      throw (error);
+    }
+    console.log('wrote some GABC');
+    process.chdir(__dirname);
   };
 
   var renderPdf = function() {
@@ -80,7 +85,6 @@ io.on('connection', function(objectSocket) {
     var output = '';
 
     render.stderr.on('data', (data) => {
-      //console.log(data);
       output = output + 'error: ' + data + '\n';
     });
 
@@ -102,7 +106,6 @@ io.on('connection', function(objectSocket) {
     var output = '';
 
     image_render.stderr.on('data', (data) => {
-      //console.log(data);
       output = output + 'error: ' + data + '\n';
     });
 
@@ -126,7 +129,6 @@ io.on('connection', function(objectSocket) {
     var output = '';
 
     midi_convert.stderr.on('data', (data) => {
-      //console.log(data);
       output = output + 'error: ' + data + '\n';
     });
 
@@ -148,7 +150,6 @@ io.on('connection', function(objectSocket) {
     var output = '';
 
     wav_convert.stderr.on('data', (data) => {
-      //console.log(data);
       output = output + 'error: ' + data + '\n';
     });
 
@@ -156,7 +157,7 @@ io.on('connection', function(objectSocket) {
       console.log('timidity process exited with code ' + code);
       if (code === 0) {
         objectSocket.emit('audio', {
-          'status':'done'
+          'status': 'done'
         });
       } else {
         errorEvent('timidity', output);
