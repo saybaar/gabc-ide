@@ -34,7 +34,7 @@ server.get('/:guid/test.wav', function(req, res) {
   res.type('audio/wav');
   res.set('Cache-Control', 'private, max-age=0, no-cache, no-store');
   res.sendFile(__dirname + '/' + req.params.guid + '/test.wav');
-})
+});
 
 io.on('connection', function(objectSocket) {
   console.log('starting in directory ' + process.cwd());

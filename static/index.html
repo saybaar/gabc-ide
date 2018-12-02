@@ -37,8 +37,7 @@
   });
 
   objectSocket.on('audio', function(data) {
-    $("#audio").attr("src", "");
-    $("#audio").attr("src", objectSocket.io.engine.id + "/test.wav");
+    $("#audio").attr("src", objectSocket.io.engine.id + "/test.wav?timestamp=" + new Date().getTime());
   });
   objectSocket.on('image', function(data) {
     console.log('success! embedding image...');

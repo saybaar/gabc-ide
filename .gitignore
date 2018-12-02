@@ -1,6 +1,2 @@
 node_modules
-*.aux
-*.gaux
-*.log
-*.glog
-*.gtex
+gabctk
