@@ -37,7 +37,9 @@
         <div id="output"></div>
       </div>
       <div class="col-md">
+        <div id="audio-message"></div>
         <div id="audio"></div>
+        <div id="image-message"></div>
         <div id="image"></div>
       </div>
     </div>
@@ -55,6 +57,8 @@
   console.log('connected with id ' + strIdent);
 
   $('#submit').on('click', function() {
+    $("#image-message").text("Loading image...");
+    $("#audio-message").text("Loading audio...");
     objectSocket.emit('gen', {
       'gabc': $('#input').val()
     })
@@ -73,9 +77,11 @@
   });
 
   objectSocket.on('audio', function(data) {
+    $("#audio-message").text("");
     $("#audio").html("<audio controls src=" + objectSocket.io.engine.id + "/test.wav?timestamp=" + new Date().getTime() + "></audio");
   });
   objectSocket.on('image', function(data) {
+    $("#image-message").text("");
     $("#image").html("<img class='img-fluid' src=" + objectSocket.io.engine.id + "/test.png?timestamp=" + new Date().getTime() + "></img>");
     // PDFObject.embed(objectSocket.io.engine.id + '/test.pdf', "#output", );
   });
@@ -83,7 +89,5 @@
     $('#output').text('Error from ' + data.source + ':\n' + data.log);
   });
 
-  //$(document).ready(function() {});
 </script>
-
 </html>
