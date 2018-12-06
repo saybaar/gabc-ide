@@ -15,8 +15,7 @@
 <body>
   <div class="container-fluid">
     <div class="row my-1">
-      <div id="hello" class="col" data-toggle="collapse" data-target="#about">
-        Welcome to this gabc web renderer!</div>
+      <div id="hello" class="col">Welcome to this gabc web renderer!</div>
     </div>
     <div class="row">
       <div class="col-md">
@@ -51,7 +50,7 @@
         audio (MIDI, WAV) and printed (PDF, PNG) formats. Audio is rendered
         using <a href="https://github.com/jperon/gabctk">gabctk</a>; print is
         rendered using <a href="https://github.com/gregorio-project/gregorio">
-          Gregorio</a> with a static .tex file. See
+          Gregorio</a> with a static <a href="/gen.tex">.tex file</a>. See
         <a href="http://gregorio-project.github.io">the Gregorio project website
         </a> for more information.
       </div>
@@ -90,11 +89,11 @@
 
   objectSocket.on('audio', function(data) {
     $("#audio-message").text("");
-    $("#audio").html("<audio controls src=" + objectSocket.io.engine.id + "/test.wav?timestamp=" + new Date().getTime() + "></audio");
+    $("#audio").html("<audio controls src=" + objectSocket.io.engine.id + "/gen.wav?timestamp=" + new Date().getTime() + "></audio");
   });
   objectSocket.on('image', function(data) {
     $("#image-message").text("");
-    $("#image").html("<img class='img-fluid' src=" + objectSocket.io.engine.id + "/test.png?timestamp=" + new Date().getTime() + "></img>");
+    $("#image").html("<img class='img-fluid' src=" + objectSocket.io.engine.id + "/gen.png?timestamp=" + new Date().getTime() + "></img>");
     // PDFObject.embed(objectSocket.io.engine.id + '/test.pdf', "#output", );
   });
   objectSocket.on('foobar', function(data) {
