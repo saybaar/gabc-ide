@@ -15,12 +15,8 @@
 <body>
   <div class="container-fluid">
     <div class="row my-1">
-      <div id="hello" class="col" data-toggle="collapse" data-target="#about">Hello!</div>
-    </div>
-    <div class="row my-1">
-      <div id="about" class="col collapse">
-        Here is some text about this app!
-      </div>
+      <div id="hello" class="col" data-toggle="collapse" data-target="#about">
+        Welcome to this gabc web renderer!</div>
     </div>
     <div class="row">
       <div class="col-md">
@@ -32,8 +28,7 @@
             <button id="submit" type="button" class="btn btn-primary float-right">submit</button>
           </div>
         </div>
-        <textarea id="input" class="form-control" spellcheck="false" rows="20"
-                  style="min-width: 100%; font-family:monospace;"></textarea>
+        <textarea id="input" class="form-control" spellcheck="false" rows="20" style="min-width: 100%; font-family:monospace;"></textarea>
         <div id="output"></div>
       </div>
       <div class="col-md">
@@ -43,7 +38,24 @@
         <div id="image"></div>
       </div>
     </div>
-  </div>
+    <div class="row my-1">
+      <div class="col">
+        <button id="hello" class="btn btn-outline-primary" data-toggle="collapse" data-target="#about">
+          About</button>
+      </div>
+    </div>
+    <div class="row my-1">
+      <div id="about" class="col collapse">
+        <a href="http://gregorio-project.github.io/gabc/index.html">gabc</a> is
+        a typesetting language for Gregorian chant. This site renders gabc into
+        audio (MIDI, WAV) and printed (PDF, PNG) formats. Audio is rendered
+        using <a href="https://github.com/jperon/gabctk">gabctk</a>; print is
+        rendered using <a href="https://github.com/gregorio-project/gregorio">
+          Gregorio</a> with a static .tex file. See
+        <a href="http://gregorio-project.github.io">the Gregorio project website
+        </a> for more information.
+      </div>
+    </div>
 </body>
 <script type="text/javascript">
   console.log('hello');
@@ -88,6 +100,6 @@
   objectSocket.on('foobar', function(data) {
     $('#output').text('Error from ' + data.source + ':\n' + data.log);
   });
-
 </script>
+
 </html>
