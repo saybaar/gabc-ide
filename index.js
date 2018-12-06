@@ -1,7 +1,6 @@
 'use strict';
 
 var express = require('express');
-var parser = require('body-parser');
 var process = require('process');
 var socket = require('socket.io');
 var fs = require('fs-extra');
@@ -11,7 +10,6 @@ const {
 
 var server = express();
 var io = socket(server.listen(8080));
-server.use(parser.urlencoded());
 express.static.mime.define({
   'text/plain': ['gabc','tex']
 });
@@ -29,6 +27,13 @@ server.get('/:guid/gen.png', function(req, res) {
   res.type('image/png');
   res.set('Cache-Control', 'private, max-age=0, no-cache, no-store');
   res.sendFile(__dirname + '/temp/' + req.params.guid + '/gen.png');
+});
+
+server.get('/:guid/gen.mid', function(req, res) {
+  res.status(200);
+  res.type('audio/midi');
+  res.set('Cache-Control', 'private, max-age=0, no-cache, no-store');
+  res.sendFile(__dirname + '/temp/' + req.params.guid + '/gen.mid');
 });
 
 server.get('/:guid/gen.wav', function(req, res) {

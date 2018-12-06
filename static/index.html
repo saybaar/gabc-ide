@@ -2,14 +2,14 @@
 <html>
 <header>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfobject/2.1.1/pdfobject.js"></script>
   <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.0/css/bootstrap.min.css" />
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.0/js/bootstrap.min.js"></script>
   <script type="text/javascript" src="/socket.io/socket.io.js"></script>
 </header>
+
 <style>
-  .pdfobject-container { height: 4in; width:6in; border: 1rem solid rgba(0,0,0,.1); }
   a { cursor: pointer; }
+  textarea { min-width: 100%; font-family:monospace; }
 </style>
 
 <body>
@@ -27,7 +27,7 @@
             <button id="submit" type="button" class="btn btn-primary float-right">submit</button>
           </div>
         </div>
-        <textarea id="input" class="form-control" spellcheck="false" rows="20" style="min-width: 100%; font-family:monospace;"></textarea>
+        <textarea id="input" class="form-control" spellcheck="false" rows="20"></textarea>
         <div id="output"></div>
       </div>
       <div class="col-md">
@@ -57,50 +57,41 @@
     </div>
 </body>
 <script type="text/javascript">
-  console.log('hello');
+  var objectSocket = io.connect("http://localhost:8080/");
 
-  var objectSocket = io.connect('http://localhost:8080/');
-  var strIdent = '';
-  objectSocket.on('hello', function(objectData) {
-    strIdent = objectData.strIdent;
-  });
-
-  console.log('connected with id ' + strIdent);
-
-  $('#submit').on('click', function() {
+  $("#submit").on("click", function() {
     $("#image-message").text("Loading image...");
     $("#audio-message").text("Loading audio...");
-    objectSocket.emit('gen', {
-      'gabc': $('#input').val()
+    objectSocket.emit("gen", {
+      "gabc": $("#input").val()
     })
   });
 
   $("#load-simple").on("click", function() {
-    $.get('short_example.gabc', function(data) {
-      $('#input').val(data);
+    $.get("short_example.gabc", function(data) {
+      $("#input").val(data);
     });
   });
-
   $("#load-full").on("click", function() {
-    $.get('example.gabc', function(data) {
-      $('#input').val(data);
+    $.get("example.gabc", function(data) {
+      $("#input").val(data);
     });
   });
 
-  objectSocket.on('audio', function(data) {
+  objectSocket.on("audio", function(data) {
     $("#audio-message").text("");
     $("#audio").html("<audio controls src=" + objectSocket.io.engine.id + "/gen.wav?timestamp=" + new Date().getTime() + "></audio");
   });
-  objectSocket.on('image', function(data) {
+  objectSocket.on("image", function(data) {
     $("#image-message").text("");
     $("#image").html("<img class='img-fluid' src=" + objectSocket.io.engine.id + "/gen.png?timestamp=" + new Date().getTime() + "></img>");
-    // PDFObject.embed(objectSocket.io.engine.id + '/test.pdf', "#output", );
   });
-  objectSocket.on('audio-error', function(data) {
-    $('#audio-message').text('Error rendering audio; check your gabc syntax');
+
+  objectSocket.on("audio-error", function(data) {
+    $("#audio-message").text("Error rendering audio; check your gabc syntax");
   });
-  objectSocket.on('image-error', function(data) {
-    $('#image-message').text('Error rendering image; check your gabc syntax');
+  objectSocket.on("image-error", function(data) {
+    $("#image-message").text("Error rendering image; check your gabc syntax");
   });
 </script>
 
