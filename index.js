@@ -59,8 +59,15 @@ io.on('connection', function(objectSocket) {
     renderAudio();
   });
 
-  var errorEvent = function(source, log) {
-    objectSocket.emit('foobar', {
+  var imageError = function(source, log) {
+    objectSocket.emit('image-error', {
+      'source': source,
+      'log': log
+    });
+  };
+
+  var audioError = function(source, log) {
+    objectSocket.emit('audio-error', {
       'source': source,
       'log': log
     });
@@ -93,7 +100,7 @@ io.on('connection', function(objectSocket) {
       if (code === 0) {
         renderImage();
       } else {
-        errorEvent('lualatex', output);
+        imageError('lualatex', output);
       }
     });
     process.chdir(__dirname);
@@ -116,7 +123,7 @@ io.on('connection', function(objectSocket) {
           'status': 'done'
         });
       } else {
-        errorEvent('convert', output);
+        imageError('convert', output);
       }
     });
     process.chdir(__dirname);
@@ -137,7 +144,7 @@ io.on('connection', function(objectSocket) {
       if (code === 0) {
         convertAudio();
       } else {
-        errorEvent('gabctk', output);
+        audioError('gabctk', output);
       }
     });
     process.chdir(__dirname);
@@ -160,7 +167,7 @@ io.on('connection', function(objectSocket) {
           'status': 'done'
         });
       } else {
-        errorEvent('timidity', output);
+        audioError('timidity', output);
       }
     });
     process.chdir(__dirname);

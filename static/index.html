@@ -96,8 +96,11 @@
     $("#image").html("<img class='img-fluid' src=" + objectSocket.io.engine.id + "/gen.png?timestamp=" + new Date().getTime() + "></img>");
     // PDFObject.embed(objectSocket.io.engine.id + '/test.pdf', "#output", );
   });
-  objectSocket.on('foobar', function(data) {
-    $('#output').text('Error from ' + data.source + ':\n' + data.log);
+  objectSocket.on('audio-error', function(data) {
+    $('#audio-message').text('Error rendering audio; check your gabc syntax');
+  });
+  objectSocket.on('image-error', function(data) {
+    $('#image-message').text('Error rendering image; check your gabc syntax');
   });
 </script>
 
